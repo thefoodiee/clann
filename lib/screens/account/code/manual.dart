@@ -47,7 +47,6 @@ class ManualCodeScreen extends StatelessWidget {
                 SizedBox(height: 10.h),
                 TextButton(
                   onPressed: () {
-                    //   TODO: submit code
                     //   context.go("/home");
                   },
                   style: ButtonStyle(

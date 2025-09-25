@@ -208,7 +208,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: TextButton(
                       onPressed: () {
-                        //   TODO: scan code or enter manually
                         showDialog(context: context, builder:(context) => classJoinAlert(
                           onCameraPressed: () {
                             Navigator.of(context).pop();

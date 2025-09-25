@@ -93,7 +93,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               SizedBox(height: 80.h),
               TextButton(
                 onPressed: () async{
-                //   TODO: 2 login logics
                   await ref.read(authProvider.notifier).signIn(emailController.text, passwordController.text, context);
                 },
                 style: ButtonStyle(
