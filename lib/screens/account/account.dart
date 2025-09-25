@@ -207,20 +207,28 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: TextButton(
-                      onPressed: () {
-                        showDialog(context: context, builder:(context) => classJoinAlert(
-                          onCameraPressed: () {
-                            Navigator.of(context).pop();
-                            context.push("/scan_code");
-                          },
-                          onTextPressed: () {
-                            Navigator.of(context).pop();
-                            context.push("/enter_code");
-                          }
-                        ),);
-                      },
+                      onPressed: null,
+                      // onPressed: () {
+                      //   // showDialog(context: context, builder:(context) => classJoinAlert(
+                      //   //   onCameraPressed: () {
+                      //   //     Navigator.of(context).pop();
+                      //   //     context.push("/scan_code");
+                      //   //   },
+                      //   //   onTextPressed: () {
+                      //   //     Navigator.of(context).pop();
+                      //   //     context.push("/enter_code");
+                      //   //   }
+                      //   // ),);
+                      // },
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(mainBlue),
+                        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                              (states) {
+                            if (states.contains(WidgetState.disabled)) {
+                              return Colors.grey; // disabled color
+                            }
+                            return mainBlue; // enabled color
+                          },
+                        ),
                         padding: WidgetStateProperty.all(
                           EdgeInsetsGeometry.symmetric(horizontal: 45.w),
                         ),

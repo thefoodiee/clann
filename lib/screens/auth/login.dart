@@ -14,7 +14,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-
   bool showPass = true;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -26,124 +25,131 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(30.w, 0, 30.w, 10.h),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: SvgPicture.asset(
-                    "assets/images/time_clock.svg",
-                    height: 150.h,
-                  ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(30.w, 0, 30.w, 10.h),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Opacity(
+                        opacity: 0.5,
+                        child: SvgPicture.asset(
+                          "assets/images/time_clock.svg",
+                          height: 150.h,
+                        ),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Email"),
+                        TextField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(10.h),
+                            fillColor: tfGrey,
+                            hintText: "2****@krmu.edu.in",
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Password"),
+                        TextField(
+                          controller: passwordController,
+                          obscureText: showPass,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(10.h),
+                            fillColor: tfGrey,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                              borderSide: BorderSide.none,
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showPass = !showPass;
+                                });
+                              },
+                              icon: Icon(
+                                showPass
+                                    ? Icons.visibility_off_rounded
+                                    : Icons.visibility_rounded,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 80.h),
+                    TextButton(
+                      onPressed: () async {
+                        await ref
+                            .read(authProvider.notifier)
+                            .signIn(emailController.text,
+                            passwordController.text, context);
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                        WidgetStateProperty.all(mainBlue),
+                        padding: WidgetStateProperty.all(
+                          EdgeInsets.symmetric(horizontal: 40.w),
+                        ),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account?"),
+                        TextButton(
+                          onPressed: () =>
+                              context.pushReplacement("/signup"),
+                          style: ButtonStyle(
+                            padding:
+                            WidgetStateProperty.all(EdgeInsets.zero),
+                          ),
+                          child: Text(
+                            "Sign up",
+                            style: TextStyle(color: mainBlue),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                  ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Email"),
-                  TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsetsGeometry.all(10.h),
-                      fillColor: tfGrey,
-                      hintText: "2****@krmu.edu.in",
-                      hintStyle: TextStyle(color: Colors.grey),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Password"),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: showPass,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsetsGeometry.all(10.h),
-                      fillColor: tfGrey,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide: BorderSide.none,
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            showPass = !showPass;
-                          });
-                        },
-                        icon: showPass
-                            ? Icon(Icons.visibility_off_rounded)
-                            : Icon(Icons.visibility_rounded),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 80.h),
-              TextButton(
-                onPressed: () async{
-                  await ref.read(authProvider.notifier).signIn(emailController.text, passwordController.text, context);
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(mainBlue),
-                  padding: WidgetStateProperty.all(
-                    EdgeInsetsGeometry.symmetric(horizontal: 40.w),
-                  ),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                ),
-                child: Text(
-                  "Submit",
-                  style: TextStyle(color: Colors.white, fontSize: 15.sp),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't have an account?"),
-                  TextButton(
-                    onPressed: () => context.pushReplacement("/signup"),
-                    style: ButtonStyle(
-                      padding: WidgetStateProperty.all(
-                        EdgeInsetsGeometry.zero,
-                      ),
-                    ),
-                    child: Text("Sign up", style: TextStyle(color: mainBlue)),
-                  ),
-                ],
-              ),
-              Spacer(),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     _buildTab(
-              //       "Login as CR",
-              //       isCrSelected,
-              //       () => setState(() => isCrSelected = true),
-              //     ),
-              //     SizedBox(width: 50.w),
-              //     _buildTab(
-              //       "Login as Student",
-              //       !isCrSelected,
-              //       () => setState(() => isCrSelected = false),
-              //     ),
-              //   ],
-              // ),
-            ],
+            ),
           ),
         ),
       ),

@@ -9,18 +9,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
-    SystemUiOverlay.top,
-    SystemUiOverlay.bottom,
-  ]);
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+  //   SystemUiOverlay.top,
+  //   SystemUiOverlay.bottom,
+  // ]);
+
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //   statusBarColor: Colors.white,
+  //   statusBarIconBrightness: Brightness.dark,
+  //   systemNavigationBarColor: Colors.white,
+  //   systemNavigationBarIconBrightness: Brightness.dark,
+  //   systemNavigationBarDividerColor: Colors.transparent,
+  //   systemNavigationBarContrastEnforced: false,
+  // ));
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.white,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
+    statusBarColor: Colors.white, // Status bar background
+    statusBarIconBrightness: Brightness.dark, // Dark status bar icons
+    systemNavigationBarColor: Colors.white, // Nav bar background
+    systemNavigationBarIconBrightness: Brightness.dark, // Dark nav bar icons
     systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarContrastEnforced: false,
   ));
 
   await Supabase.initialize(
@@ -40,22 +48,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(393, 852),
-      child: SafeArea(
-        child: ProviderScope(
-          child: MaterialApp.router(
-            theme: ThemeData(
-              fontFamily: "Poppins",
-              colorSchemeSeed: mainBlue,
-            ),
-            // darkTheme: ThemeData(
-            //   colorSchemeSeed: Color(0xff283A56),
-            //   brightness: Brightness.dark
-            // ),
-            // themeMode: ThemeMode.dark,
-            routerConfig: router,
-            debugShowCheckedModeBanner: false,
-            title: 'Clann',
+      child: ProviderScope(
+        child: MaterialApp.router(
+          theme: ThemeData(
+            fontFamily: "Poppins",
+            colorSchemeSeed: mainBlue,
           ),
+          // darkTheme: ThemeData(
+          //   colorSchemeSeed: Color(0xff283A56),
+          //   brightness: Brightness.dark
+          // ),
+          // themeMode: ThemeMode.dark,
+          routerConfig: router,
+          debugShowCheckedModeBanner: false,
+          title: 'Clann',
         ),
       ),
     );
