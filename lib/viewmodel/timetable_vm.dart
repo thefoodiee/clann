@@ -301,8 +301,8 @@ class TimeTableViewModel extends StateNotifier<TimetableState> {
       int successCount = 0;
       final now = DateTime.now();
 
-      // Limit the number of notifications to avoid system limits
-      final limitedSlots = slots.take(50).toList(); // Most systems have limits around 64
+      // Limit number of notifications to avoid hitting system limits
+      final limitedSlots = slots.take(50).toList();
 
       for (int i = 0; i < limitedSlots.length; i++) {
         final slot = limitedSlots[i];
@@ -315,7 +315,7 @@ class TimeTableViewModel extends StateNotifier<TimetableState> {
             continue;
           }
 
-          // Calculate candidate time for today with validation
+          // Base class start time
           DateTime classTime = DateTime(
             now.year,
             now.month,
@@ -324,35 +324,31 @@ class TimeTableViewModel extends StateNotifier<TimetableState> {
             slot.startTime.minute,
           );
 
-          // Validate the time is reasonable (not too far in the past or future)
-          if (classTime.year < 2020 || classTime.year > 2030) {
-            continue;
-          }
-
+          // Validate and shift to the next occurrence if needed
           if (weekday != now.weekday || classTime.isBefore(now.add(const Duration(minutes: 5)))) {
-            // Move to the *next* occurrence of this weekday
             int daysToAdd = 0;
             while (classTime.weekday != weekday || classTime.isBefore(now.add(const Duration(minutes: 5)))) {
               classTime = classTime.add(const Duration(days: 1));
               daysToAdd++;
-
-              // Prevent infinite loops
-              if (daysToAdd > 14) break;
+              if (daysToAdd > 14) break; // safety
             }
           }
 
-          // Only schedule if the time is within a reasonable range
-          if (classTime.difference(now).inDays <= 7 && classTime.isAfter(now)) {
-            // Create safe notification content
-            final title = 'Class: ${_sanitizeString(slot.courseName)}';
-            final body = '${_sanitizeString(slot.classCode)} at ${slot.startTime.hour}:${slot.startTime.minute.toString().padLeft(2, '0')}';
+          // Notification time = 2 minutes before class
+          final notifyTime = classTime.subtract(const Duration(minutes: 2));
 
-            // Use the improved schedule method that returns success status
+          // Only schedule if valid and within 7 days
+          if (notifyTime.isAfter(now) && notifyTime.difference(now).inDays <= 7) {
+            final title = 'Class Reminder';
+            final body =
+                '${_sanitizeString(slot.courseName)} (${_sanitizeString(slot.classCode)}) starts at '
+                '${slot.startTime.hour}:${slot.startTime.minute.toString().padLeft(2, '0')}';
+
             final scheduled = await NotificationService.instance.schedule(
-              id: i + 1000, // Use offset to avoid ID conflicts
+              id: i + 1000,
               title: title,
               body: body,
-              dateTime: classTime,
+              dateTime: notifyTime,
               payload: 'timetable_${slot.day}_${slot.classCode}',
             );
 
@@ -362,22 +358,19 @@ class TimeTableViewModel extends StateNotifier<TimetableState> {
           }
         } catch (slotError) {
           debugPrint('Error scheduling notification for slot: $slotError');
-          // Continue with other slots even if one fails
           continue;
         }
       }
 
       debugPrint('Successfully scheduled $successCount notifications out of ${limitedSlots.length} slots');
 
-      // Log current pending notifications for debugging
       final pending = await NotificationService.instance.getPendingNotifications();
       debugPrint('Total pending notifications: ${pending.length}');
-
     } catch (e) {
       debugPrint('Critical error in notification scheduling: $e');
-      // Don't rethrow - just log the error
     }
   }
+
 
   // Helper method to sanitize strings for notifications
   String _sanitizeString(String? input) {
