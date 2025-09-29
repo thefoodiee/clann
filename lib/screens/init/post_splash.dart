@@ -41,7 +41,7 @@ class _PostSplashScreenState extends ConsumerState<PostSplashScreen> {
         alignment: Alignment.center,
         child: SvgPicture.asset(
           "assets/images/logo.svg",
-          height: 200.h,
+          height: 150.sp,
         ),
       ),
     );

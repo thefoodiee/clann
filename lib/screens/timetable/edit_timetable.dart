@@ -311,132 +311,134 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            /// Top bar
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    "Cancel",
-                    style: TextStyle(fontSize: 15.sp, color: Colors.black),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
+        body: SafeArea(
+          child: Column(
+            children: [
+              /// Top bar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => context.pop(),
                     child: Text(
-                      "Edit Timetable",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      "Cancel",
+                      style: TextStyle(fontSize: 15.sp, color: Colors.black),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "Edit Timetable",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                TextButton(
-                  onPressed: isSubmitting ? null : _submitTimetable,
-                  child: isSubmitting
-                      ? SizedBox(
-                    width: 16.w,
-                    height: 16.w,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: mainBlue,
+                  TextButton(
+                    onPressed: isSubmitting ? null : _submitTimetable,
+                    child: isSubmitting
+                        ? SizedBox(
+                      width: 16.w,
+                      height: 16.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: mainBlue,
+                      ),
+                    )
+                        : Text(
+                      "Submit",
+                      style: TextStyle(fontSize: 15.sp, color: mainBlue),
                     ),
-                  )
-                      : Text(
-                    "Submit",
-                    style: TextStyle(fontSize: 15.sp, color: mainBlue),
                   ),
-                ),
-              ],
-            ),
-
-            /// Days as ToggleButtons
-            ToggleButtons(
-              selectedColor: Colors.white,
-              constraints: BoxConstraints(
-                minWidth: (1.sw - (days.length - 1) * 2) / days.length,
-                minHeight: 50.h,
+                ],
               ),
-              fillColor: mainBlue,
-              color: Colors.black,
-              isSelected: List.generate(days.length,
-                      (index) => index == selectedDayIndex),
-              onPressed: (index) {
-                setState(() {
-                  selectedDayIndex = index;
-                });
-                _loadDataForSelectedDay();
-              },
-              children: days.map((day) {
-                return Center(
+          
+              /// Days as ToggleButtons
+              ToggleButtons(
+                selectedColor: Colors.white,
+                constraints: BoxConstraints(
+                  minWidth: (1.sw - (days.length - 1) * 2) / days.length,
+                  minHeight: 50.h,
+                ),
+                fillColor: mainBlue,
+                color: Colors.black,
+                isSelected: List.generate(days.length,
+                        (index) => index == selectedDayIndex),
+                onPressed: (index) {
+                  setState(() {
+                    selectedDayIndex = index;
+                  });
+                  _loadDataForSelectedDay();
+                },
+                children: days.map((day) {
+                  return Center(
+                    child: Text(
+                      day,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+          
+              /// Loading indicator
+              if (timetableState.isLoading || isLoadingCourses)
+                Padding(
+                  padding: EdgeInsets.all(20.h),
+                  child: CircularProgressIndicator(color: mainBlue),
+                ),
+          
+              /// Error message
+              if (timetableState.errorMessage != null)
+                Padding(
+                  padding: EdgeInsets.all(20.w),
                   child: Text(
-                    day,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'Error: ${timetableState.errorMessage}',
+                    style: TextStyle(color: Colors.red, fontSize: 14.sp),
                   ),
-                );
-              }).toList(),
-            ),
-
-            /// Loading indicator
-            if (timetableState.isLoading || isLoadingCourses)
-              Padding(
-                padding: EdgeInsets.all(20.h),
-                child: CircularProgressIndicator(color: mainBlue),
-              ),
-
-            /// Error message
-            if (timetableState.errorMessage != null)
-              Padding(
-                padding: EdgeInsets.all(20.w),
-                child: Text(
-                  'Error: ${timetableState.errorMessage}',
-                  style: TextStyle(color: Colors.red, fontSize: 14.sp),
                 ),
-              ),
-
-            /// Timetable entries
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                child: Column(
-                  children: List.generate(timeSlots.length, (int index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.access_time_rounded),
-                            SizedBox(width: 6.w),
-                            Text(
-                              timeSlots[index],
-                              style: TextStyle(
-                                fontFamily: "Inter",
-                                fontSize: 17.sp,
+          
+              /// Timetable entries
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  child: Column(
+                    children: List.generate(timeSlots.length, (int index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.access_time_rounded),
+                              SizedBox(width: 6.w),
+                              Text(
+                                timeSlots[index],
+                                style: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontSize: 17.sp,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        _subjectFieldBuild(
-                          index == 0,
-                          index,
-                          classroomControllers[index],
-                        ),
-                        SizedBox(height: 25.h),
-                      ],
-                    );
-                  }),
+                            ],
+                          ),
+                          _subjectFieldBuild(
+                            index == 0,
+                            index,
+                            classroomControllers[index],
+                          ),
+                          SizedBox(height: 25.h),
+                        ],
+                      );
+                    }),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
